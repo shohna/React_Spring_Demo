@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.shohna.MyReactApp.Repositories.ProjectRepository;
 import com.shohna.MyReactApp.domain.Project;
+import com.shohna.MyReactApp.exceptions.ProjectIdException;
 
 @Service
 public class ProjectService {
@@ -13,7 +14,14 @@ public class ProjectService {
 	private ProjectRepository projectRepository;
 	
 	public Project SaveOrUpdateProject(Project project) {
-		return projectRepository.save(project);
+		
+		try {
+			project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
+			return projectRepository.save(project);
+		}catch(Exception e) {
+			throw new ProjectIdException("Project Id " +project.getProjectIdentifier().toUpperCase()+ " already exists");
+		}
+		
 	}
 
 }
