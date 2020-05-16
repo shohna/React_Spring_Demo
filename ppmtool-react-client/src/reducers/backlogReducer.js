@@ -17,6 +17,17 @@ export default function (state = initialState, action) {
         projectTasks: action.payload,
       };
 
+    case GET_PROJECT_TASK:
+      return {
+        ...state,
+        projectTask: action.payload,
+      };
+
+    case DELETE_PROJECT_TASK:
+      return {
+        ...state,
+      };
+
     default:
       return state;
   }
