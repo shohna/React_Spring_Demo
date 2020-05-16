@@ -3,7 +3,9 @@ package com.shohna.MyReactApp.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shohna.MyReactApp.Repositories.BacklogRepository;
 import com.shohna.MyReactApp.Repositories.ProjectRepository;
+import com.shohna.MyReactApp.domain.Backlog;
 import com.shohna.MyReactApp.domain.Project;
 import com.shohna.MyReactApp.exceptions.ProjectIdException;
 
@@ -12,11 +14,26 @@ public class ProjectService {
 	
 	@Autowired
 	private ProjectRepository projectRepository;
+	@Autowired 
+	private BacklogRepository backlogRepository;
+	
 	
 	public Project SaveOrUpdateProject(Project project) {
 		
+		
 		try {
 			project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
+			
+			if(project.getId() == null) {
+				Backlog backlog = new Backlog();
+				project.setBacklog(backlog);
+				backlog.setProject(project);
+				backlog.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
+			}
+			if(project.getId() != null) {
+				project.setBacklog(backlogRepository.findByProjectIdentifier(project.getProjectIdentifier().toUpperCase()));
+			}
+			
 			return projectRepository.save(project);
 		}catch(Exception e) {
 			throw new ProjectIdException("Project Id " +project.getProjectIdentifier().toUpperCase()+ " already exists");
